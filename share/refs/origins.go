@@ -54,6 +54,7 @@ func NewOrigin(source identifiable, parent identifiable) origin {
 	return origin{source: source, parent: parent}
 }
 
+//nolint:revive
 func ParseOrigin(raw string) (origin, error) {
 
 	if len(raw) < len(Head)+len(Foot) {
