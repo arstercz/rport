@@ -49,7 +49,7 @@ func (suite *ProcessorTestSuite) SetupTest() {
 	suite.store = NewMockStore()
 	suite.consumer = &MockConsumer{target: notifications.TargetMail}
 	suite.consumerScript = &MockConsumer{target: notifications.TargetScript}
-	suite.processor = notifications.NewProcessor(suite.store, suite.consumer, suite.consumerScript)
+	suite.processor = notifications.NewProcessor(nil, suite.store, suite.consumer, suite.consumerScript)
 }
 
 func (suite *ProcessorTestSuite) TestProcessNotificationReceived() {

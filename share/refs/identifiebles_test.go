@@ -86,9 +86,9 @@ func Test_identifiable_ID(t *testing.T) {
 			name: "check simple serialization",
 			fields: fields{
 				iType: TestType,
-				id:    "some-wierd::id",
+				id:    "some-weird::id",
 			},
-			want: "some-wierd::id",
+			want: "some-weird::id",
 		},
 	}
 	for _, tt := range tests {
@@ -118,9 +118,9 @@ func Test_identifiable_String(t *testing.T) {
 			name: "check simple serialization",
 			fields: fields{
 				iType: TestType,
-				id:    "some-wierd::id",
+				id:    "some-weird::id",
 			},
-			want: "test-type(some-wierd::id)",
+			want: "test-type(some-weird::id)",
 		},
 	}
 	for _, tt := range tests {

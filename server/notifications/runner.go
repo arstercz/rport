@@ -3,6 +3,8 @@ package notifications
 import (
 	"context"
 	"sync"
+
+	"github.com/realvnc-labs/rport/share/logger"
 )
 
 type Processor interface {
@@ -46,6 +48,7 @@ type processor struct {
 	timeToDie   context.Context
 	killMe      context.CancelFunc
 	consumers   []Consumer
+	logger      *logger.Logger
 }
 
 func (p *processor) start() {
@@ -69,13 +72,12 @@ root:
 		case <-p.timeToDie.Done():
 			break root
 		case notification := <-updates:
-			// TODO: should log on db error
-			p.store.LogRunning(context.Background(), notification.ID.ID())
+			p.logger.Errorf("failed updating state: %v", p.store.LogRunning(context.Background(), notification.ID.ID()))
 			err := consumer.Process(notification)
 			if err == nil {
-				p.store.LogDone(context.Background(), notification.ID.ID())
+				p.logger.Errorf("failed updating state: %v", p.store.LogDone(context.Background(), notification.ID.ID()))
 			} else {
-				p.store.LogError(context.Background(), notification.ID.ID(), err.Error())
+				p.logger.Errorf("failed updating state: %v", p.store.LogError(context.Background(), notification.ID.ID(), err.Error()))
 			}
 		}
 	}
@@ -87,12 +89,13 @@ func (p *processor) Close() error {
 	return nil
 }
 
-func NewProcessor(store Store, consumers ...Consumer) Processor {
+func NewProcessor(logger *logger.Logger, store Store, consumers ...Consumer) Processor {
 	ctx := context.Background()
 	waitForDead, cancel := context.WithCancel(ctx)
 	timeToDie, killMe := context.WithCancel(ctx)
 
 	p := &processor{
+		logger:      logger,
 		consumers:   consumers,
 		store:       store,
 		waitForDead: waitForDead,

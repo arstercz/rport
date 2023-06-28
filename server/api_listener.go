@@ -154,7 +154,7 @@ func NewAPIListener(
 		notificationConsumers = append(notificationConsumers, mailConsumer)
 	}
 
-	runner := notifications.NewProcessor(store, notificationConsumers...)
+	runner := notifications.NewProcessor(logger.NewLogger("notifications", config.Logging.LogOutput, config.Logging.LogLevel), store, notificationConsumers...)
 
 	// init vault DB if it already exists
 	fs := files.NewFileSystem()

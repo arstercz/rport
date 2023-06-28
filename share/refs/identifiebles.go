@@ -7,7 +7,7 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
-// IdentifiableType make it easier for ide to find defined instances in the codebase, alse type can't contain (
+// IdentifiableType make it easier for ide to find defined instances in the codebase, type can't contain (
 type IdentifiableType string
 
 type Identifiable interface {

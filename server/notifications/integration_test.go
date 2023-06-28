@@ -55,7 +55,7 @@ func (suite *NotificationsIntegrationTestSuite) SetupTest() {
 
 	suite.scriptConsumer = scriptRunner.NewConsumer()
 
-	suite.runner = notifications.NewProcessor(suite.store, suite.mailConsumer, suite.scriptConsumer)
+	suite.runner = notifications.NewProcessor(nil, suite.store, suite.mailConsumer, suite.scriptConsumer)
 
 }
 
