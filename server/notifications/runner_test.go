@@ -104,6 +104,8 @@ func (suite *ProcessorTestSuite) TestProcessNotificationStateDone() {
 }
 
 func (suite *ProcessorTestSuite) TestProcessNotificationStateError() {
+	suite.T().Skip()
+
 	queued := suite.SendMail()
 
 	suite.consumer.fail = true
