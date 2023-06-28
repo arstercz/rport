@@ -1,8 +1,6 @@
 package notifications
 
 import (
-	_ "embed"
-
 	"github.com/realvnc-labs/rport/share/refs"
 )
 

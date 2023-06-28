@@ -32,6 +32,7 @@ func (o origin) Parent() identifiable {
 	return o.parent
 }
 
+//nolint:revive
 func (o origin) NextFromIdentifiable(nextParent identifiable) origin {
 	return origin{
 		source: o.source,
@@ -39,6 +40,7 @@ func (o origin) NextFromIdentifiable(nextParent identifiable) origin {
 	}
 }
 
+//nolint:revive
 func (o origin) Next(iType IdentifiableType, id string) origin {
 	return origin{source: o.source, parent: NewIdentifiable(iType, id)}
 }
@@ -47,6 +49,7 @@ func (o origin) String() string {
 	return Head + o.source.String() + Separator + o.parent.String() + Foot
 }
 
+// nolint:revive
 func NewOrigin(source identifiable, parent identifiable) origin {
 	return origin{source: source, parent: parent}
 }
