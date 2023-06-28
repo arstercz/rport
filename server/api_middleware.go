@@ -14,6 +14,7 @@ import (
 	errors2 "github.com/realvnc-labs/rport/server/api/errors"
 	"github.com/realvnc-labs/rport/server/api/users"
 	"github.com/realvnc-labs/rport/server/bearer"
+	"github.com/realvnc-labs/rport/server/clients/clienttunnel"
 	"github.com/realvnc-labs/rport/server/routes"
 	"github.com/realvnc-labs/rport/share/enums"
 	"github.com/realvnc-labs/rport/share/logger"
@@ -145,6 +146,36 @@ func (al *APIListener) wrapClientAccessMiddleware(next http.Handler) http.Handle
 	})
 }
 
+func (al *APIListener) extendedPermissionDeleteTunnelRaw(tunnel *clienttunnel.Tunnel, currUser *users.User) error {
+	// TODO: this should be moved in the permission middleware
+	if rportplus.IsPlusEnabled(al.config.PlusConfig) && !currUser.IsAdmin() && tunnel.Owner != currUser.Username {
+		plusPermissionCapability := al.Server.plusManager.GetExtendedPermissionCapabilityEx()
+		tr, _ := al.userService.GetEffectiveUserExtendedPermissions(currUser)
+		if tr != nil {
+			err := plusPermissionCapability.ValidateExtendedDeleteNonOwnedTunnelPermissionRaw(tr)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (al *APIListener) extendedPermissionCommandRaw(cmd string, currUser *users.User) error {
+	if rportplus.IsPlusEnabled(al.config.PlusConfig) {
+		// check only if plus is enabled, no error otherwise
+		plusPermissionCapability := al.Server.plusManager.GetExtendedPermissionCapabilityEx()
+		_, cr := al.userService.GetEffectiveUserExtendedPermissions(currUser)
+		if cr != nil {
+			err := plusPermissionCapability.ValidateExtendedCommandPermissionRaw(cmd, false, cr)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (al *APIListener) permissionsMiddleware(permission string) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -166,11 +197,10 @@ func (al *APIListener) permissionsMiddleware(permission string) mux.MiddlewareFu
 					al.jsonError(w, err)
 					return
 				}
-				if permission == users.PermissionTunnels || permission == users.PermissionCommands || permission == users.PermissionScheduler {
-					if !rportplus.IsPlusEnabled(al.config.PlusConfig) {
-						al.jsonErrorResponseWithTitle(w, http.StatusForbidden, "Extended permission validation failed because rport-plus plugin not loaded")
-						return
-					}
+				if rportplus.IsPlusEnabled(al.config.PlusConfig) &&
+					(permission == users.PermissionTunnels ||
+						permission == users.PermissionCommands ||
+						permission == users.PermissionScheduler) {
 					plusPermissionCapability := al.Server.plusManager.GetExtendedPermissionCapabilityEx()
 					al.Debugf("extended \"%s\" permission middleware: %v %v", permission, r.Method, r.URL.Path)
 					tr, cr := al.userService.GetEffectiveUserExtendedPermissions(currUser)

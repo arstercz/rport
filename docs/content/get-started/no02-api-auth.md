@@ -345,7 +345,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `password_expired` bool NOT NULL default false,
   `two_fa_send_to` varchar(150),
-  `token` char(36) default NULL,
+  `token` varchar(128) default NULL,
   `totp_secret` longtext,
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -469,6 +469,17 @@ INSERT INTO groups VALUES('admin','Administrators');
 
 This creates a user `admin` with the password `password`. To use another password, create the appropriate bcrypt hash
 [here](https://bcrypt-generator.com/) or use `htpasswd` on the command line.
+
+### Extended group permissions additional fields
+
+To enable the extended group permissions feature, the database must be upgraded with the following SQL statement:
+
+```sql
+ALTER TABLE `group_details` ADD COLUMN `tunnels_restricted` TEXT DEFAULT '{}';
+ALTER TABLE `group_details` ADD COLUMN `commands_restricted` TEXT DEFAULT '{}';
+```
+
+Upon start, the "Extended group permissions" feature will be in trial mode, if the fields are present in the database, but there is no Plus license installed.
 
 ### API Usage examples
 
