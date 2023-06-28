@@ -43,7 +43,7 @@ func TestParseIdentifiable(t *testing.T) {
 			args: args{
 				raw: "bad-text",
 			},
-			want:    nil,
+			want:    identifiable{},
 			wantErr: true,
 		},
 		{

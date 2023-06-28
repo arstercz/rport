@@ -141,19 +141,20 @@ func NewAPIListener(
 	if err != nil {
 		return nil, fmt.Errorf("failed to bootstrap api: %v", err)
 	}
+
 	store := me.NewRepository(db)
 	// dispatcher := notifications.NewDispatcher(store)
-
-	smtpConfig, err := rmailer.ConfigFromSMTPConfig(config.SMTP)
-	if err != nil {
-		return nil, fmt.Errorf("failed to bootstrap api: %v", err)
-	}
-
-	mailConsumer := rmailer.NewConsumer(rmailer.NewRMailer(smtpConfig))
-
 	scriptConsumer := scriptRunner.NewConsumer()
 
-	runner := notifications.NewProcessor(store, mailConsumer, scriptConsumer)
+	notificationConsumers := []notifications.Consumer{scriptConsumer}
+	smtpConfig, err := rmailer.ConfigFromSMTPConfig(config.SMTP)
+	if err != nil {
+		server.Logger.Errorf("failed to bootstrap smtp notifications: %v", err)
+		mailConsumer := rmailer.NewConsumer(rmailer.NewRMailer(smtpConfig))
+		notificationConsumers = append(notificationConsumers, mailConsumer)
+	}
+
+	runner := notifications.NewProcessor(store, notificationConsumers...)
 
 	// init vault DB if it already exists
 	fs := files.NewFileSystem()
