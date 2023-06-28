@@ -14,6 +14,7 @@ import (
 	"github.com/realvnc-labs/rport/server/notifications/channels/rmailer"
 	"github.com/realvnc-labs/rport/server/notifications/channels/scriptRunner"
 	me "github.com/realvnc-labs/rport/server/notifications/repository/sqlite"
+	"github.com/realvnc-labs/rport/share/logger"
 	"github.com/realvnc-labs/rport/share/simpleops"
 )
 
@@ -55,7 +56,7 @@ func (suite *NotificationsIntegrationTestSuite) SetupTest() {
 
 	suite.scriptConsumer = scriptRunner.NewConsumer()
 
-	suite.runner = notifications.NewProcessor(nil, suite.store, suite.mailConsumer, suite.scriptConsumer)
+	suite.runner = notifications.NewProcessor(logger.NewLogger("notifications", logger.NewLogOutput("out.log"), logger.LogLevelInfo), suite.store, suite.mailConsumer, suite.scriptConsumer)
 
 }
 

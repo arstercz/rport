@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/realvnc-labs/rport/server/notifications"
+	"github.com/realvnc-labs/rport/share/logger"
 	"github.com/realvnc-labs/rport/share/refs"
 )
 
@@ -49,7 +50,7 @@ func (suite *ProcessorTestSuite) SetupTest() {
 	suite.store = NewMockStore()
 	suite.consumer = &MockConsumer{target: notifications.TargetMail}
 	suite.consumerScript = &MockConsumer{target: notifications.TargetScript}
-	suite.processor = notifications.NewProcessor(nil, suite.store, suite.consumer, suite.consumerScript)
+	suite.processor = notifications.NewProcessor(logger.NewLogger("notifications", logger.NewLogOutput("out.log"), logger.LogLevelInfo), suite.store, suite.consumer, suite.consumerScript)
 }
 
 func (suite *ProcessorTestSuite) TestProcessNotificationReceived() {
