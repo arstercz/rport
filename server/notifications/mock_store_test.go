@@ -52,6 +52,9 @@ func NewMockStore() *MockStore {
 }
 
 func (m *MockStore) NotificationStream(target notifications.Target) chan notifications.NotificationDetails {
+	m.Lock()
+	defer m.Unlock()
+
 	ch, found := m.ch[target]
 	if !found {
 		ch = make(chan notifications.NotificationDetails, len(m.notifications))
@@ -103,6 +106,9 @@ func (m *MockStore) Details(ctx context.Context, notificationID notifications.No
 }
 
 func (m *MockStore) Close() error {
+	m.Lock()
+	defer m.Unlock()
+
 	for _, ch := range m.ch {
 		close(ch)
 	}
