@@ -47,6 +47,7 @@ func FigureOutTarget(target string) Target {
 	}
 }
 
+//nolint:revive
 func NewDispatcher(repository store) dispatcher {
 	return dispatcher{
 		store: repository,

@@ -13,6 +13,7 @@ const ScriptTimeout = time.Second * 20
 type consumer struct {
 }
 
+//nolint:revive
 func NewConsumer() *consumer {
 	return &consumer{}
 }

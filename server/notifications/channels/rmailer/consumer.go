@@ -13,6 +13,7 @@ type consumer struct {
 	mailer Mailer
 }
 
+//nolint:revive
 func NewConsumer(mailer Mailer) *consumer {
 	return &consumer{mailer: mailer}
 }

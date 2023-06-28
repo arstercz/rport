@@ -175,6 +175,7 @@ func (r repository) List(ctx context.Context) ([]notifications.NotificationSumma
 	return res, err
 }
 
+//nolint:revive
 func NewRepository(connection *sqlx.DB) repository {
 	sinks := map[notifications.Target]chan notifications.NotificationDetails{}
 	for _, target := range notifications.AllTargets {

@@ -21,6 +21,7 @@ type Identifiable interface {
 
 var identifiableRegEx = regexp.MustCompile(`([^\(]+)\(([^\)]+)\)`)
 
+//nolint:revive
 func ParseIdentifiable(raw string) (identifiable, error) {
 	matches := identifiableRegEx.FindStringSubmatch(raw)
 	if len(matches) == 0 {
@@ -38,11 +39,13 @@ type identifiable struct {
 	id    string
 }
 
+//nolint:revive
 func GenerateIdentifiable(iType IdentifiableType) identifiable {
 	id := ulid.Make()
 	return NewIdentifiable(iType, id.String())
 }
 
+//nolint:revive
 func NewIdentifiable(iType IdentifiableType, id string) identifiable {
 	return identifiable{iType: iType, id: id}
 }
@@ -52,7 +55,7 @@ func (i identifiable) Type() IdentifiableType {
 	return i.iType
 }
 
-// ID something by which you can find it in it's origin storage
+// ID something by which you can find it in its origin storage
 func (i identifiable) ID() string {
 	return i.id
 }
@@ -62,12 +65,14 @@ func (i identifiable) String() string {
 	return string(i.iType) + "(" + i.id + ")"
 }
 
+//nolint:revive
 func MustIdentifiableFactory(iType IdentifiableType) func(id string) identifiable {
 	return func(id string) identifiable {
 		return NewIdentifiable(iType, id)
 	}
 }
 
+//nolint:revive
 func MustGenerator(iType IdentifiableType) func() identifiable {
 	return func() identifiable {
 		return GenerateIdentifiable(iType)
