@@ -19,10 +19,10 @@ type Identifiable interface {
 	String() string
 }
 
-var identifiebleRegEx = regexp.MustCompile("([^\\(]+)\\(([^\\)]+)\\)")
+var identifiableRegEx = regexp.MustCompile(`([^\(]+)\(([^\)]+)\)`)
 
 func ParseIdentifiable(raw string) (identifiable, error) {
-	matches := identifiebleRegEx.FindStringSubmatch(raw)
+	matches := identifiableRegEx.FindStringSubmatch(raw)
 	if len(matches) == 0 {
 		return identifiable{}, fmt.Errorf("cant parse identifielbe: %v", raw)
 	}

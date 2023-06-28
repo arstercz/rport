@@ -73,6 +73,7 @@ func (suite *NotificationsIntegrationTestSuite) TestDispatcherCreatesNotificatio
 		ContentType: notifications.ContentTypeTextHTML,
 	}
 	_, err := suite.dispatcher.Dispatch(context.Background(), expectedOrigin, notification)
+	suite.NoError(err)
 
 	notification = notifications.NotificationData{
 		Target:      "./test.sh",

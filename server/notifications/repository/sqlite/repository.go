@@ -11,7 +11,6 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"github.com/realvnc-labs/rport/server/notifications"
-	"github.com/realvnc-labs/rport/share/query"
 	"github.com/realvnc-labs/rport/share/refs"
 )
 
@@ -32,9 +31,9 @@ const MaxNotificationsQueue = 1000
 const RecipientsSeparator = "@|@"
 
 type repository struct {
-	db        *sqlx.DB
-	converter *query.SQLConverter
-	sinks     map[notifications.Target]chan notifications.NotificationDetails
+	db *sqlx.DB
+	//converter *query.SQLConverter
+	sinks map[notifications.Target]chan notifications.NotificationDetails
 }
 
 func (r repository) LogError(ctx context.Context, nid string, error string) error {

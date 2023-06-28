@@ -30,6 +30,7 @@ func (suite *DispatcherTestSuite) TestDispatcherCreatesNotification() {
 	ni, err := suite.dispatcher.Dispatch(context.Background(), expectedOrigin, notification)
 	suite.NoError(err)
 	details, found, err := suite.store.Details(context.Background(), ni)
+	suite.NoError(err)
 	suite.True(found)
 	suite.Equal(notifications.NotificationDetails{
 		Origin: expectedOrigin,
