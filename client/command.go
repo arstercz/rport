@@ -10,6 +10,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 	"sync"
@@ -31,6 +32,12 @@ var (
 // now is used to stub time.Now in tests
 var now = time.Now
 
+func cmd_trim(s string) string {
+	nlist := strings.Split(s, " ")
+
+	return nlist[0]
+}
+
 func (c *Client) HandleRunCmdRequest(ctx context.Context, reqPayload []byte) (*comm.RunCmdResponse, error) {
 	if !c.configHolder.RemoteCommands.Enabled {
 		return nil, errors.New("remote commands execution is disabled")
@@ -46,8 +53,19 @@ func (c *Client) HandleRunCmdRequest(ctx context.Context, reqPayload []byte) (*c
 		return nil, errors.New("remote scripts are disabled")
 	}
 
-	if !job.IsScript && !c.isAllowed(job.Command) {
-		return nil, fmt.Errorf("command is not allowed: %v", job.Command)
+	if !job.IsScript {
+		cmd := job.Command
+		if c.configHolder.RemoteCommands.UseFind {
+			// full path return original
+			// base return full path
+			cmd, err = exec.LookPath(cmd_trim(job.Command))
+			if err != nil {
+				return nil, err
+			}
+		}
+		if !c.isAllowed(cmd) {
+			return nil, fmt.Errorf("command is not allowed: %v, use_find: %v", cmd, c.configHolder.RemoteCommands.UseFind)
+		}
 	}
 
 	interpreter := system.Interpreter{

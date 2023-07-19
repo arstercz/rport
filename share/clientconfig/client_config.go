@@ -77,6 +77,7 @@ type LogConfig struct {
 
 type CommandsConfig struct {
 	Enabled       bool      `json:"enabled" mapstructure:"enabled"`
+	UseFind       bool      `json:"use_find" mapstructure:"use_find"`
 	SendBackLimit int       `json:"send_back_limit" mapstructure:"send_back_limit"`
 	Allow         []string  `json:"allow" mapstructure:"allow"`
 	Deny          []string  `json:"deny" mapstructure:"deny"`
